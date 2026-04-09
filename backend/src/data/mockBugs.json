@@ -1,0 +1,188 @@
+[
+  {
+    "bugId": "BUG-2026-001",
+    "title": "Ontology 运行失败: 候选人入职流程节点崩溃",
+    "description": "在执行 HRO 自动化招聘的候选人入职 (Onboarding) 流程时，系统在背景调查 (Background Check) 节点发生崩溃。导致该批次 15 名候选人状态卡在 'PENDING_BG_CHECK'。",
+    "status": "NEW",
+    "priority": "P0",
+    "platformId": "ontology_test_system",
+    "sourceEntityType": "run",
+    "sourceEntityId": "run_hro_onboarding_01",
+    "sourceUrl": "/ontology/runs/run_hro_onboarding_01",
+    "assignee": "",
+    "reporter": "system_auto",
+    "createdAt": "2026-03-31T01:00:00Z",
+    "updatedAt": "2026-03-31T01:00:00Z",
+    "verificationMode": "platform_auto_test",
+    "duplicateCount": 5,
+    "dedupeKey": "hash_ontology_test_system_run_hro_onboarding_01",
+    "platformContext": {
+      "runId": "run_hro_onboarding_01",
+      "snapshotId": "snap_cand_8821",
+      "ontologyIssue": "Missing mandatory property 'background_check_status' on Candidate object",
+      "runTrace": [
+        { "node": "Resume Parsing", "status": "success", "durationMs": 120 },
+        { "node": "Initial Screening", "status": "success", "durationMs": 45 },
+        { "node": "Background Check Trigger", "status": "failed", "durationMs": 812, "error": "NullPointerException: property 'background_check_status' is undefined" }
+      ]
+    }
+  },
+  {
+    "bugId": "BUG-2026-002",
+    "title": "候选人匹配规则校验失败: 薪资范围逻辑冲突",
+    "description": "HR 在 Rule Editor 中更新高级开发工程师的匹配规则时，保存失败。系统提示薪资下限大于上限，但 UI 表单上显示正常，疑似 Diff 生成逻辑错误。",
+    "status": "IN_PROGRESS",
+    "priority": "P1",
+    "platformId": "rule_editor",
+    "sourceEntityType": "rule",
+    "sourceEntityId": "rule_match_senior_dev",
+    "sourceUrl": "/rules/rule_match_senior_dev",
+    "assignee": "dev_sarah",
+    "reporter": "hr_ops_mike",
+    "createdAt": "2026-03-30T14:30:00Z",
+    "updatedAt": "2026-03-31T08:15:00Z",
+    "verificationMode": "regression_suite",
+    "platformContext": {
+      "ruleId": "rule_match_senior_dev",
+      "ruleName": "Senior Developer Matching Rule",
+      "validationErrors": ["Logic Conflict: min_salary (45000) > max_salary (40000)"],
+      "diff": {
+        "old": "{\n  \"min_salary\": 30000,\n  \"max_salary\": 40000\n}",
+        "new": "{\n  \"min_salary\": 45000,\n  \"max_salary\": 40000\n}"
+      }
+    }
+  },
+  {
+    "bugId": "BUG-2026-003",
+    "title": "Data Object Editor: 薪酬实体 Schema 校验失败",
+    "description": "尝试为外包员工添加新的津贴字段时，Data Object Editor 拒绝保存 Schema。提示类型不匹配。",
+    "status": "FIXED",
+    "priority": "P2",
+    "platformId": "data_object_editor",
+    "sourceEntityType": "schema",
+    "sourceEntityId": "schema_compensation",
+    "sourceUrl": "/data-objects/schema_compensation",
+    "assignee": "dev_alex",
+    "reporter": "pm_lisa",
+    "createdAt": "2026-03-31T05:20:00Z",
+    "updatedAt": "2026-03-31T06:00:00Z",
+    "verificationMode": "manual_verify",
+    "platformContext": {
+      "schemaId": "schema_compensation",
+      "entityName": "OutsourcedEmployeeCompensation",
+      "validationErrors": ["Field 'allowance_type' expects Enum but received String"]
+    }
+  },
+  {
+    "bugId": "BUG-2026-004",
+    "title": "入职流程 Event 触发异常",
+    "description": "在 event_editor 中配置的候选人接受 Offer 事件未能正确触发后续的 IT 设备准备流程。事件总线中未查到对应消息。",
+    "status": "NEW",
+    "priority": "P1",
+    "platformId": "event_editor",
+    "sourceEntityType": "event_trigger",
+    "sourceEntityId": "evt_offer_accepted",
+    "sourceUrl": "/events/evt_offer_accepted",
+    "assignee": "",
+    "reporter": "hr_sys_admin",
+    "createdAt": "2026-03-31T09:00:00Z",
+    "updatedAt": "2026-03-31T09:00:00Z",
+    "verificationMode": "platform_auto_test",
+    "platformContext": {
+      "eventId": "evt_offer_accepted",
+      "eventName": "Candidate Offer Accepted",
+      "errorLog": "Failed to publish to topic 'hro.onboarding.it_prep'. Topic does not exist or permission denied."
+    }
+  },
+  {
+    "bugId": "BUG-2026-005",
+    "title": "薪酬规则校验失败: 批量计算异常",
+    "description": "规则引擎在执行批量薪资调整时，部分员工的薪资计算结果出现 NaN，导致整个批处理任务失败。",
+    "status": "IN_PROGRESS",
+    "priority": "P0",
+    "platformId": "rule_editor",
+    "sourceEntityType": "rule_execution",
+    "sourceEntityId": "exec_batch_salary_adj",
+    "sourceUrl": "/rules/exec_batch_salary_adj",
+    "assignee": "dev_john",
+    "reporter": "payroll_manager",
+    "createdAt": "2026-03-31T10:30:00Z",
+    "updatedAt": "2026-03-31T11:15:00Z",
+    "verificationMode": "regression_suite",
+    "platformContext": {
+      "ruleId": "rule_batch_adj_2026",
+      "ruleName": "2026 Annual Salary Adjustment",
+      "validationErrors": [
+        "Execution Error: Division by zero encountered when calculating performance multiplier for employee ID: EMP-8821."
+      ],
+      "diff": null
+    }
+  },
+  {
+    "bugId": "BUG-2026-006",
+    "title": "候选人背景调查状态同步延迟",
+    "description": "第三方背调系统已返回结果，但 ontology_test_system 中的候选人状态超过 2 小时仍未更新为 '背调完成'。",
+    "status": "TRIAGED",
+    "priority": "P2",
+    "platformId": "ontology_test_system",
+    "sourceEntityType": "sync_job",
+    "sourceEntityId": "job_bg_check_sync",
+    "sourceUrl": "/ontology/runs/job_bg_check_sync",
+    "assignee": "dev_backend_team",
+    "reporter": "recruiter_sarah",
+    "createdAt": "2026-03-31T13:45:00Z",
+    "updatedAt": "2026-03-31T14:20:00Z",
+    "verificationMode": "manual_verify",
+    "platformContext": {
+      "runId": "job_bg_check_sync_1028",
+      "snapshotId": "snap_current",
+      "ontologyIssue": "State transition timeout. Expected state: BACKGROUND_CHECK_COMPLETED, Current state: BACKGROUND_CHECK_PENDING.",
+      "runTrace": [
+        { "node": "FetchVendorResult", "status": "success", "durationMs": 450 },
+        { "node": "UpdateOntologyState", "status": "pending", "durationMs": 7200000 }
+      ]
+    }
+  },
+  {
+    "bugId": "BUG-2026-007",
+    "title": "发送 Offer 邮件 Action 缺少模板参数",
+    "description": "在 action_editor 中配置的发送 Offer 邮件动作，在实际执行时报错，提示缺少 'candidate_name' 和 'start_date' 参数，导致邮件发送失败。",
+    "status": "FIXED",
+    "priority": "P1",
+    "platformId": "action_editor",
+    "sourceEntityType": "action_definition",
+    "sourceEntityId": "act_send_offer_email",
+    "sourceUrl": "/actions/act_send_offer_email",
+    "assignee": "dev_john",
+    "reporter": "hr_ops_team",
+    "createdAt": "2026-03-31T09:20:00Z",
+    "updatedAt": "2026-03-31T16:00:00Z",
+    "verificationMode": "platform_auto_test",
+    "platformContext": {
+      "actionId": "act_send_offer_email",
+      "actionType": "EMAIL_NOTIFICATION",
+      "errorDetails": "Template rendering failed: Missing required variables [candidate_name, start_date] in context."
+    }
+  },
+  {
+    "bugId": "BUG-2026-008",
+    "title": "生成的内推链接携带错误的渠道参数",
+    "description": "通过 link_generator 生成的员工内推链接，解析后发现 UTM source 参数被错误地硬编码为 'linkedin'，而不是 'employee_referral'。",
+    "status": "NEW",
+    "priority": "P2",
+    "platformId": "link_generator",
+    "sourceEntityType": "link_template",
+    "sourceEntityId": "tpl_emp_referral",
+    "sourceUrl": "/links/tpl_emp_referral",
+    "assignee": "",
+    "reporter": "marketing_team",
+    "createdAt": "2026-03-31T11:10:00Z",
+    "updatedAt": "2026-03-31T11:10:00Z",
+    "verificationMode": "smoke_test",
+    "platformContext": {
+      "templateId": "tpl_emp_referral",
+      "generatedUrl": "https://careers.hro.com/apply?jobId=123&utm_source=linkedin",
+      "expectedUrl": "https://careers.hro.com/apply?jobId=123&utm_source=employee_referral"
+    }
+  }
+]
